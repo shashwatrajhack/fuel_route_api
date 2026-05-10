@@ -81,14 +81,12 @@ def load_stations():
 def find_optimal_stops(route_points, total_distance_miles):
     stations = load_stations()
 
-    # ── OPTIMIZATION 1: thin the route to ~100 sample points max ──────────────
-    # OSRM returns hundreds/thousands of points. We only need ~100 for accuracy.
+  
     step = max(1, len(route_points) // 100)
     sampled = route_points[::step]
     if route_points[-1] not in sampled:
         sampled.append(route_points[-1])
 
-    # ── OPTIMIZATION 2: build bounding box of route + 1 degree buffer ─────────
     lats = [p[0] for p in sampled]
     lons = [p[1] for p in sampled]
     min_lat, max_lat = min(lats) - 1.0, max(lats) + 1.0
@@ -98,7 +96,6 @@ def find_optimal_stops(route_points, total_distance_miles):
     nearby = [s for s in stations
               if min_lat <= s['lat'] <= max_lat and min_lon <= s['lon'] <= max_lon]
 
-    # ── Build cumulative distances for sampled points ──────────────────────────
     cum = [0.0]
     for i in range(1, len(sampled)):
         d = haversine(sampled[i-1][0], sampled[i-1][1], sampled[i][0], sampled[i][1])
@@ -108,7 +105,7 @@ def find_optimal_stops(route_points, total_distance_miles):
     # Scale factor to map sampled distances → actual route distances
     scale = total_distance_miles / total_sampled if total_sampled > 0 else 1.0
 
-    # ── Project each nearby station onto sampled route ─────────────────────────
+   
     MAX_DETOUR = 50.0  # miles — wider since we're using state centroids
     route_stations = []
     for st in nearby:
@@ -133,7 +130,7 @@ def find_optimal_stops(route_points, total_distance_miles):
         avg = sum(prices) / len(prices) if prices else 3.5
         return [], round((total_distance_miles / MPG) * avg, 2)
 
-    # ── Greedy cheapest-in-range algorithm ────────────────────────────────────
+    
     stops = []
     current_mile = 0.0
     fuel_in_tank = TANK_GALLONS
@@ -175,7 +172,7 @@ def find_optimal_stops(route_points, total_distance_miles):
         })
         current_mile = best_mile
 
-    # Final leg cost
+
     final_gallons = (total_distance_miles - current_mile) / MPG
     avg_p = sum(s['price'] for _, s in route_stations) / len(route_stations)
     total_cost += final_gallons * avg_p

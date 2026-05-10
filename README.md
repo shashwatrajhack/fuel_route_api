@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Fuel Route Planner API
 
 A Django REST API that calculates optimal fuel stops along a US road trip route, minimising total fuel cost.
@@ -104,3 +105,6 @@ This greedy approach is O(n·m) in the worst case but fast in practice because t
 - **No API key** — both OSRM and Nominatim are genuinely free with no key required.
 - **map_url** — returns a Google Maps link the client can embed or open. No Maps API billing.
 - **State centroid geocoding** — stations are projected using state-level coordinates (bundled offline). A production version would use a city-level geocoding database for higher accuracy.
+=======
+# fuel_route_api
+>>>>>>> 8b6de698f23f4fad4fc2c6267c1f565973580848
